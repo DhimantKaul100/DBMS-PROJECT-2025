@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victims</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Disaster Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="disasters.html">Disasters</a></li>
+                <li><a href="rescue-teams.html">Rescue Teams</a></li>
+                <li><a href="volunteers.html">Volunteers</a></li>
+                <li><a href="victims.html">Victims</a></li>
+                <li><a href="relief-centers.html">Relief Centers</a></li>
+                <li><a href="donations.html">Donations</a></li>
+                <li><a href="agencies.html">Agencies</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Victim Management</h2>
+            <p>Track and manage information about disaster victims to ensure timely assistance and support.</p>
+            <a href="#victimForm" class="cta-button">Add Victim</a>
+        </div>
+    </section>
+
+    <main>
+        <!-- Section: Add New Victim -->
+        <section id="victims">
+            <h2>Add a New Victim</h2>
+            <form id="victimForm">
+                <input type="text" placeholder="Name" required>
+                <input type="number" placeholder="Age" required>
+                <select required>
+                    <option value="">Gender</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                </select>
+                <input type="text" placeholder="Contact Details">
+                <select required>
+                    <option value="">Status</option>
+                    <option>Rescued</option>
+                    <option>Safe</option>
+                    <option>Injured</option>
+                    <option>Missing</option>
+                    <option>Deceased</option>
+                </select>
+                <input type="number" placeholder="Disaster ID">
+                <input type="number" placeholder="Relief Center ID">
+                <button type="submit">Add Victim</button>
+            </form>
+        </section>
+
+        <!-- Section: Existing Victims -->
+        <section id="existing-victims">
+            <h2>Existing Victims</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Status</th>
+                        <th>Disaster ID</th>
+                        <th>Relief Center ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>John Doe</td>
+                        <td>35</td>
+                        <td>Male</td>
+                        <td>Rescued</td>
+                        <td>101</td>
+                        <td>201</td>
+                    </tr>
+                    <tr>
+                        <td>Jane Smith</td>
+                        <td>28</td>
+                        <td>Female</td>
+                        <td>Injured</td>
+                        <td>102</td>
+                        <td>202</td>
+                    </tr>
+                    <tr>
+                        <td>Michael Brown</td>
+                        <td>40</td>
+                        <td>Male</td>
+                        <td>Missing</td>
+                        <td>103</td>
+                        <td>203</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section: Testimonials -->
+        <section id="testimonials">
+            <h2>What People Say</h2>
+            <div class="testimonial-container">
+                <article class="testimonial">
+                    <p>"The rescue team saved my life and brought me to safety. I am forever grateful for their efforts."</p>
+                    <h4>- Rescued Victim</h4>
+                </article>
+                <article class="testimonial">
+                    <p>"The support provided at the relief center was exceptional. Thank you for helping us during this difficult time."</p>
+                    <h4>- Flood Survivor</h4>
+                </article>
+            </div>
+        </section>
+
+        <!-- Section: FAQs -->
+        <section id="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <h3>How is victim information used?</h3>
+                <p>Victim information is used to coordinate rescue efforts, provide medical aid, and reunite families.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Can I update victim details?</h3>
+                <p>Yes, victim details can be updated by authorized personnel to ensure accurate records.</p>
+            </div>
+            <div class="faq-item">
+                <h3>How can I report a missing person?</h3>
+                <p>You can report a missing person by filling out the victim form and selecting "Missing" as the status.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
+            <p>Follow us on: 
+                <a href="https://facebook.com" target="_blank">Facebook</a> | 
+                <a href="https://twitter.com" target="_blank">Twitter</a> | 
+                <a href="https://instagram.com" target="_blank">Instagram</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

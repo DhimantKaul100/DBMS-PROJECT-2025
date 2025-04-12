@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rescue Teams</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Disaster Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="disasters.html">Disasters</a></li>
+                <li><a href="rescue-teams.html">Rescue Teams</a></li>
+                <li><a href="volunteers.html">Volunteers</a></li>
+                <li><a href="victims.html">Victims</a></li>
+                <li><a href="relief-centers.html">Relief Centers</a></li>
+                <li><a href="donations.html">Donations</a></li>
+                <li><a href="agencies.html">Agencies</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Rescue Teams</h2>
+            <p>Coordinate and manage rescue teams to ensure timely and effective disaster response.</p>
+            <a href="#teamForm" class="cta-button">Add Rescue Team</a>
+        </div>
+    </section>
+
+    <main>
+        <!-- Section: Add New Rescue Team -->
+        <section id="teams">
+            <h2>Add a New Rescue Team</h2>
+            <form id="teamForm">
+                <input type="text" placeholder="Team Name" required>
+                <input type="text" placeholder="Specialization" required>
+                <input type="text" placeholder="Contact Number" required>
+                <select required>
+                    <option value="">Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Standby">Standby</option>
+                </select>
+                <button type="submit">Add Team</button>
+            </form>
+        </section>
+
+        <!-- Section: Existing Rescue Teams -->
+        <section id="existing-teams">
+            <h2>Existing Rescue Teams</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Team Name</th>
+                        <th>Specialization</th>
+                        <th>Contact Number</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Alpha Rescue</td>
+                        <td>Flood Response</td>
+                        <td>+1-800-123-4567</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>Bravo Team</td>
+                        <td>Earthquake Rescue</td>
+                        <td>+1-800-987-6543</td>
+                        <td>Standby</td>
+                    </tr>
+                    <tr>
+                        <td>Delta Squad</td>
+                        <td>Wildfire Evacuation</td>
+                        <td>+1-800-555-7890</td>
+                        <td>Active</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section: Testimonials -->
+        <section id="testimonials">
+            <h2>What People Say</h2>
+            <div class="testimonial-container">
+                <article class="testimonial">
+                    <p>"The rescue team arrived just in time to save us from the rising floodwaters. We are forever grateful for their bravery."</p>
+                    <h4>- Flood Survivor</h4>
+                </article>
+                <article class="testimonial">
+                    <p>"The earthquake rescue team worked tirelessly to save lives and provide assistance. Their dedication is unmatched."</p>
+                    <h4>- Earthquake Victim</h4>
+                </article>
+            </div>
+        </section>
+
+        <!-- Section: FAQs -->
+        <section id="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <h3>What is the role of rescue teams?</h3>
+                <p>Rescue teams are responsible for saving lives, providing emergency assistance, and ensuring the safety of disaster-affected individuals.</p>
+            </div>
+            <div class="faq-item">
+                <h3>How can I contact a rescue team?</h3>
+                <p>You can contact rescue teams through their listed contact numbers or by reaching out to local disaster management authorities.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Can I volunteer to join a rescue team?</h3>
+                <p>Yes, many rescue teams welcome volunteers. Contact your nearest rescue team for more information.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
+            <p>Follow us on: 
+                <a href="https://facebook.com" target="_blank">Facebook</a> | 
+                <a href="https://twitter.com" target="_blank">Twitter</a> | 
+                <a href="https://instagram.com" target="_blank">Instagram</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
