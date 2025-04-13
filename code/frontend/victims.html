@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victims</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Disaster Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="disasters.html">Disasters</a></li>
+                <li><a href="rescue-teams.html">Rescue Teams</a></li>
+                <li><a href="volunteers.html">Volunteers</a></li>
+                <li><a href="victims.html">Victims</a></li>
+                <li><a href="relief-centers.html">Relief Centers</a></li>
+                <li><a href="donations.html">Donations</a></li>
+                <li><a href="agencies.html">Agencies</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Victim Management</h2>
+            <p>Track and manage information about disaster victims to ensure timely assistance and support.</p>
+        </div>
+    </section>
+
+    <main>
+        <!-- Section: Existing Victims -->
+        <section id="existing-victims">
+            <h2>Existing Victims</h2>
+
+            <!-- Filter Buttons -->
+            <div>
+                <button class="site-button" onclick="fetchVictimsByStatus('Rescued')">Rescued</button>
+                <button class="site-button" onclick="fetchVictimsByStatus('Safe')">Safe</button>
+                <button class="site-button" onclick="fetchVictimsByStatus('Injured')">Injured</button>
+                <button class="site-button" onclick="fetchVictimsByStatus('Missing')">Missing</button>
+                <button class="site-button" onclick="fetchVictimsByStatus('Deceased')">Deceased</button>
+                <button class="site-button" onclick="fetchAllVictims()">All Victims</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Status</th>
+                        <th>Disaster ID</th>
+                        <th>Relief Center ID</th>
+                    </tr>
+                </thead>
+                <tbody id="victim-table-body">
+                    <!-- Victims rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section: Testimonials -->
+        <section id="testimonials">
+            <h2>What People Say</h2>
+            <div class="testimonial-container">
+                <article class="testimonial">
+                    <p>"The rescue team saved my life and brought me to safety. I am forever grateful for their efforts."</p>
+                    <h4>- Rescued Victim</h4>
+                </article>
+                <article class="testimonial">
+                    <p>"The support provided at the relief center was exceptional. Thank you for helping us during this difficult time."</p>
+                    <h4>- Flood Survivor</h4>
+                </article>
+            </div>
+        </section>
+
+        <!-- Section: FAQs -->
+        <section id="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <h3>How is victim information used?</h3>
+                <p>Victim information is used to coordinate rescue efforts, provide medical aid, and reunite families.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
+            <p>Follow us on: 
+                <a href="https://facebook.com" target="_blank">Facebook</a> | 
+                <a href="https://twitter.com" target="_blank">Twitter</a> | 
+                <a href="https://instagram.com" target="_blank">Instagram</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function fetchVictimsByStatus(status) {
+            fetch(`http://localhost:3000/api/victims/status/${status}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('victim-table-body');
+                    tableBody.innerHTML = '';
+                    data.forEach(victim => {
+                        const reliefCenterId = victim.relief_center_id !== null ? victim.relief_center_id : 'Not assigned';
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${victim.name}</td>
+                            <td>${victim.age}</td>
+                            <td>${victim.gender}</td>
+                            <td>${victim.status}</td>
+                            <td>${victim.disaster_id}</td>
+                            <td>${reliefCenterId}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching victims by status:', error);
+                    const tableBody = document.getElementById('victim-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="6">Failed to load data.</td></tr>';
+                });
+        }
+
+        function fetchAllVictims() {
+            fetch('http://localhost:3000/api/victims')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('victim-table-body');
+                    tableBody.innerHTML = '';
+                    data.forEach(victim => {
+                        const reliefCenterId = victim.relief_center_id !== null ? victim.relief_center_id : 'Not assigned';
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${victim.name}</td>
+                            <td>${victim.age}</td>
+                            <td>${victim.gender}</td>
+                            <td>${victim.status}</td>
+                            <td>${victim.disaster_id}</td>
+                            <td>${reliefCenterId}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching victims:', error);
+                    const tableBody = document.getElementById('victim-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="6">Failed to load data.</td></tr>';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAllVictims();
+        });
+    </script>
+</body>
+</html>

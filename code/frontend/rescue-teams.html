@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rescue Teams</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Disaster Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="disasters.html">Disasters</a></li>
+                <li><a href="rescue-teams.html">Rescue Teams</a></li>
+                <li><a href="volunteers.html">Volunteers</a></li>
+                <li><a href="victims.html">Victims</a></li>
+                <li><a href="relief-centers.html">Relief Centers</a></li>
+                <li><a href="donations.html">Donations</a></li>
+                <li><a href="agencies.html">Agencies</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Rescue Teams</h2>
+            <p>Coordinate and manage rescue teams to ensure timely and effective disaster response.</p>
+        </div>
+    </section>
+
+    <main>
+        <!-- Section: Existing Rescue Teams -->
+        <section id="existing-teams">
+            <h2>Existing Rescue Teams</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Team Name</th>
+                        <th>Specialization</th>
+                        <th>Contact Number</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="rescue-team-table-body">
+                    <!-- Rescue teams rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section: Testimonials -->
+        <section id="testimonials">
+            <h2>What People Say</h2>
+            <div class="testimonial-container">
+                <article class="testimonial">
+                    <p>"The rescue team arrived just in time to save us from the rising floodwaters. We are forever grateful for their bravery."</p>
+                    <h4>- Flood Survivor</h4>
+                </article>
+                <article class="testimonial">
+                    <p>"The earthquake rescue team worked tirelessly to save lives and provide assistance. Their dedication is unmatched."</p>
+                    <h4>- Earthquake Victim</h4>
+                </article>
+            </div>
+        </section>
+
+        <!-- Section: FAQs -->
+        <section id="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <h3>What is the role of rescue teams?</h3>
+                <p>Rescue teams are responsible for saving lives, providing emergency assistance, and ensuring the safety of disaster-affected individuals.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
+            <p>Follow us on: 
+                <a href="https://facebook.com" target="_blank">Facebook</a> | 
+                <a href="https://twitter.com" target="_blank">Twitter</a> | 
+                <a href="https://instagram.com" target="_blank">Instagram</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function fetchRescueTeams() {
+            fetch('http://localhost:3000/api/rescue-teams')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('rescue-team-table-body');
+                    tableBody.innerHTML = '';
+                    data.forEach(team => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${team.team_name}</td>
+                            <td>${team.specialization}</td>
+                            <td>${team.contact_number}</td>
+                            <td>${team.status}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching rescue teams:', error);
+                    const tableBody = document.getElementById('rescue-team-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="4">Failed to load data.</td></tr>';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchRescueTeams();
+        });
+    </script>
+</body>
+</html>

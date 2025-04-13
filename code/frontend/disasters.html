@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disasters</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Disaster Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="disasters.html">Disasters</a></li>
+                <li><a href="rescue-teams.html">Rescue Teams</a></li>
+                <li><a href="volunteers.html">Volunteers</a></li>
+                <li><a href="victims.html">Victims</a></li>
+                <li><a href="relief-centers.html">Relief Centers</a></li>
+                <li><a href="donations.html">Donations</a></li>
+                <li><a href="agencies.html">Agencies</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Disaster Management</h2>
+            <p>Track and manage information about disasters to ensure effective response and recovery efforts.</p>
+            <a href="#disasterForm" class="cta-button">Add Disaster</a>
+        </div>
+    </section>
+
+    <main>
+        <!-- Section: Existing Disasters -->
+        <section id="existing-disasters">
+            <h2>Existing Disasters</h2>
+            <div>
+                <button class="site-button" onclick="fetchDisasters('all')">All Disasters</button>
+                <button class="site-button" onclick="fetchDisasters('ongoing')">Ongoing Disasters</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Location</th>
+                            <th>Severity</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="disaster-table-body">
+                        <!-- Disaster rows will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section: Disasters Before a Specific Date -->
+        <section id="disasters-before-date">
+            <h2>Disasters Before a Specific Date</h2>
+            <form id="beforeDateForm" onsubmit="fetchDisastersBeforeDate(event)">
+                <label for="beforeDate">Select Date:</label>
+                <input type="date" id="beforeDate" required>
+                <button type="submit">Search</button>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="before-date-table-body">
+                    <!-- Rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </section>
+
+
+        <!-- Section: Add New Disaster -->
+        <section id="disasters">
+            <h2>Add a New Disaster</h2>
+            <form id="disasterForm" onsubmit="addDisaster(event)">
+                <input type="text" id="disaster_type" placeholder="Type" required>
+                <input type="date" id="date" required>
+                <input type="text" id="location" placeholder="Location" required>
+                <input type="number" id="severity_level" placeholder="Severity (1-10)" min="1" max="10" required>
+                <textarea id="description" placeholder="Description"></textarea>
+                <select id="status" required>
+                    <option value="">Status</option>
+                    <option value="Ongoing">Ongoing</option>
+                    <option value="Not Ongoing">Not Ongoing</option>
+                </select>
+                <button type="submit">Add Disaster</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function fetchDisasters(filter) {
+            let apiUrl = 'http://localhost:3000/api/disasters';
+            if (filter === 'ongoing') {
+                apiUrl = 'http://localhost:3000/api/disasters/ongoing';
+            }
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('disaster-table-body');
+                    tableBody.innerHTML = '';
+                    data.forEach(disaster => {
+                        const row = document.createElement('tr');
+
+                        const typeCell = document.createElement('td');
+                        typeCell.textContent = disaster.disaster_type;
+                        row.appendChild(typeCell);
+
+                        const dateCell = document.createElement('td');
+                        dateCell.textContent = new Date(disaster.date).toLocaleDateString();
+                        row.appendChild(dateCell);
+
+                        const locationCell = document.createElement('td');
+                        locationCell.textContent = disaster.location;
+                        row.appendChild(locationCell);
+
+                        const severityCell = document.createElement('td');
+                        severityCell.textContent = disaster.severity_level;
+                        row.appendChild(severityCell);
+
+                        const statusCell = document.createElement('td');
+                        statusCell.textContent = disaster.status;
+                        row.appendChild(statusCell);
+
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching disasters:', error);
+                    tableBody.innerHTML = '<tr><td colspan="5">Failed to load data.</td></tr>';
+                });
+        }
+
+        function fetchDisastersBeforeDate(event) {
+            event.preventDefault(); // Prevent form submission from reloading the page
+
+            const beforeDate = document.getElementById('beforeDate').value;
+
+            fetch(`http://localhost:3000/api/disasters/before?beforeDate=${beforeDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('before-date-table-body');
+                    tableBody.innerHTML = ''; // Clear previous results
+
+                    if (data.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="3">No disasters found before this date.</td></tr>';
+                        return;
+                    }
+
+                    data.forEach(disaster => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                    <td>${disaster.disaster_type}</td>
+                    <td>${disaster.location}</td>
+                    <td>${new Date(disaster.date).toLocaleDateString()}</td>
+                `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching disasters before a specific date:', error);
+                    const tableBody = document.getElementById('before-date-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="3">Failed to load data.</td></tr>';
+                });
+        }
+
+
+        function addDisaster(event) {
+            event.preventDefault();
+
+            const disaster_type = document.getElementById('disaster_type').value;
+            const date = document.getElementById('date').value;
+            const location = document.getElementById('location').value;
+            const severity_level = document.getElementById('severity_level').value;
+            const description = document.getElementById('description').value;
+            const status = document.getElementById('status').value;
+
+            fetch('http://localhost:3000/api/disasters', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    disaster_type: disaster_type,
+                    date: date,
+                    location: location,
+                    severity_level: severity_level,
+                    description: description,
+                    status: status
+                }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Disaster added successfully!');
+                        fetchDisasters('all');
+                        document.getElementById('disasterForm').reset();
+                    } else {
+                        alert('Failed to add disaster.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding disaster:', error);
+                    alert('Error adding disaster.');
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDisasters('all');
+        });
+    </script>
+</body>
+
+</html>

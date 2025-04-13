@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteers</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Disaster Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="disasters.html">Disasters</a></li>
+                <li><a href="rescue-teams.html">Rescue Teams</a></li>
+                <li><a href="volunteers.html">Volunteers</a></li>
+                <li><a href="victims.html">Victims</a></li>
+                <li><a href="relief-centers.html">Relief Centers</a></li>
+                <li><a href="donations.html">Donations</a></li>
+                <li><a href="agencies.html">Agencies</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Volunteers</h2>
+            <p>Join our team of dedicated volunteers and make a difference in disaster relief efforts.</p>
+        </div>
+    </section>
+
+    <main>
+        <!-- Section: Existing Volunteers -->
+        <section id="existing-volunteers">
+            <h2>Existing Volunteers</h2>
+
+            <!-- Filter Buttons -->
+            <div>
+                <button class="site-button" onclick="fetchVolunteersByAvailability(true)">Available</button>
+                <button class="site-button" onclick="fetchVolunteersByAvailability(false)">Unavailable</button>
+                <button class="site-button" onclick="fetchAllVolunteers()">All Volunteers</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Skills</th>
+                        <th>Contact Number</th>
+                        <th>Availability</th>
+                    </tr>
+                </thead>
+                <tbody id="volunteer-table-body">
+                    <!-- Volunteer rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section: Volunteers in Active Rescue Teams -->
+        <section id="active-rescue-volunteers">
+            <h2>Volunteers in Active Rescue Teams</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Volunteer ID</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody id="active-volunteer-table-body">
+                    <!-- Rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function fetchVolunteers() {
+            fetch('http://localhost:3000/api/volunteers')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('volunteer-table-body');
+                    tableBody.innerHTML = '';
+                    data.forEach(volunteer => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${volunteer.name}</td> 
+                            <td>${volunteer.skills}</td> 
+                            <td>${volunteer.contact_number}</td> 
+                            <td>${volunteer.availability ? 'Available' : 'Unavailable'}</td> 
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching volunteers:', error);
+                    const tableBody = document.getElementById('volunteer-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="4">Failed to load data.</td></tr>';
+                });
+        }
+
+        function fetchVolunteersByAvailability(availability) {
+            fetch(`http://localhost:3000/api/volunteers/availability/${availability}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('volunteer-table-body');
+                    tableBody.innerHTML = '';
+                    data.forEach(volunteer => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${volunteer.name}</td> 
+                            <td>${volunteer.skills}</td> 
+                            <td>${volunteer.contact_number}</td> 
+                            <td>${volunteer.availability ? 'Available' : 'Unavailable'}</td> 
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching volunteers by availability:', error);
+                    const tableBody = document.getElementById('volunteer-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="4">Failed to load data.</td></tr>';
+                });
+        }
+
+        function fetchAllVolunteers() {
+            fetch('http://localhost:3000/api/volunteers')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('volunteer-table-body');
+                    tableBody.innerHTML = '';
+                    data.forEach(volunteer => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${volunteer.name}</td> 
+                            <td>${volunteer.skills}</td> 
+                            <td>${volunteer.contact_number}</td> 
+                            <td>${volunteer.availability ? 'Available' : 'Unavailable'}</td> 
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching volunteers:', error);
+                    const tableBody = document.getElementById('volunteer-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="4">Failed to load data.</td></tr>';
+                });
+        }
+
+        function fetchActiveRescueVolunteers() {
+            fetch('http://localhost:3000/api/volunteers/active-rescue-team')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('active-volunteer-table-body');
+                    tableBody.innerHTML = '';
+                    data.forEach(volunteer => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${volunteer.volunteer_id}</td> 
+                            <td>${volunteer.name}</td> 
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching active rescue team volunteers:', error);
+                    const tableBody = document.getElementById('active-volunteer-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="2">Failed to load data.</td></tr>';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAllVolunteers();
+            fetchActiveRescueVolunteers();
+        });
+    </script>
+
+</body>
+</html>

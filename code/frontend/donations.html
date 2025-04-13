@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donations</title>
+    <link rel="stylesheet" href="assets/styles/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Disaster Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="disasters.html">Disasters</a></li>
+                <li><a href="rescue-teams.html">Rescue Teams</a></li>
+                <li><a href="volunteers.html">Volunteers</a></li>
+                <li><a href="victims.html">Victims</a></li>
+                <li><a href="relief-centers.html">Relief Centers</a></li>
+                <li><a href="donations.html">Donations</a></li>
+                <li><a href="agencies.html">Agencies</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Make a Difference</h2>
+            <p>Your contributions can save lives and bring hope to disaster-affected communities.</p>
+        </div>
+    </section>
+
+    <main>
+        <!-- Section: Recent Donations -->
+        <section id="recent-donations">
+            <h2>Recent Donations</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Donor Name</th>
+                        <th>Amount</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody id="donation-table-body">
+                    <!-- Donations rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section: Testimonials -->
+        <section id="testimonials">
+            <h2>What People Say</h2>
+            <div class="testimonial-container">
+                <article class="testimonial">
+                    <p>"Thanks to the donations, we were able to rebuild our home after the flood. We are forever grateful!"</p>
+                    <h4>- A Flood Victim</h4>
+                </article>
+                <article class="testimonial">
+                    <p>"The support we received during the earthquake was overwhelming. Thank you for your generosity!"</p>
+                    <h4>- Earthquake Survivor</h4>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function fetchDonations() {
+            fetch('http://localhost:3000/api/donations')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('donation-table-body');
+                    tableBody.innerHTML = '';
+                    data.forEach(donation => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${donation.donor_name}</td>
+                            <td>${donation.amount}</td>
+                            <td>${donation.purpose}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching donations:', error);
+                    const tableBody = document.getElementById('donation-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="3">Failed to load data.</td></tr>';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDonations();
+        });
+    </script>
+</body>
+</html>
