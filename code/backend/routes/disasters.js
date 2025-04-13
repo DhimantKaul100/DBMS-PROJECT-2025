@@ -43,6 +43,26 @@ router.get('/before', async (req, res) => {
     }
 });
 
+// GET number of missing victims for each disaster affected area
+router.get('/missing-victims', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT d.disaster_id, d.disaster_type, a.area_name, 
+                   COUNT(v.victim_id) AS missing_victims
+            FROM disaster AS d
+            LEFT JOIN affected_area AS a ON d.disaster_id = a.disaster_id
+            JOIN victim AS v ON d.disaster_id = v.disaster_id
+            WHERE v.status = 'Missing'
+            GROUP BY d.disaster_id, d.disaster_type, a.area_name
+            ORDER BY d.disaster_id;
+        `);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching missing victims count:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 
 // POST a new disaster
 router.post('/', async (req, res) => {

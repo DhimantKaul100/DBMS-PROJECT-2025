@@ -36,6 +36,14 @@
         <!-- Section: Existing Rescue Teams -->
         <section id="existing-teams">
             <h2>Existing Rescue Teams</h2>
+
+             <!-- Filter Buttons -->
+            <div>
+                <button class="site-button" onclick="fetchRescueTeamsByStatus('Active')">Active Teams</button>
+                <button class="site-button" onclick="fetchRescueTeamsByStatus('Standby')">Standby Teams</button>
+                <button class="site-button" onclick="fetchRescueTeams()">All Teams</button>
+            </div>
+
             <table>
                 <thead>
                     <tr>
@@ -51,6 +59,28 @@
             </table>
         </section>
 
+         <!-- Section: Teams in Specified Areas -->
+        <section id="teams-in-areas">
+            <h2>Teams Working in Specified Areas</h2>
+            <form id="areaForm" onsubmit="fetchTeamsInAreas(event)">
+                <input type="text" id="locations" placeholder="Enter locations (comma-separated)" required>
+                <button type="submit" class="site-button">Search</button>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Team ID</th>
+                        <th>Team Name</th>
+                        <th>Specialization</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
+                <tbody id="teams-in-areas-table-body">
+                    <!-- Rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </section>
+
         <!-- Section: Testimonials -->
         <section id="testimonials">
             <h2>What People Say</h2>
@@ -61,7 +91,6 @@
                 </article>
                 <article class="testimonial">
                     <p>"The earthquake rescue team worked tirelessly to save lives and provide assistance. Their dedication is unmatched."</p>
-                    <h4>- Earthquake Victim</h4>
                 </article>
             </div>
         </section>
@@ -109,6 +138,58 @@
                 .catch(error => {
                     console.error('Error fetching rescue teams:', error);
                     const tableBody = document.getElementById('rescue-team-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="4">Failed to load data.</td></tr>';
+                });
+        }
+
+        function fetchRescueTeamsByStatus(status) {
+            fetch(`http://localhost:3000/api/rescue-teams/status/${status}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('rescue-team-table-body');
+                    tableBody.innerHTML = '';
+                    data.forEach(team => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${team.team_name}</td>
+                            <td>${team.specialization}</td>
+                            <td>${team.contact_number}</td>
+                            <td>${team.status}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching rescue teams by status:', error);
+                    const tableBody = document.getElementById('rescue-team-table-body');
+                    tableBody.innerHTML = '<tr><td colspan="4">Failed to load data.</td></tr>';
+                });
+        }
+
+        function fetchTeamsInAreas(event) {
+            event.preventDefault();
+            let locations = document.getElementById('locations').value;
+            locations = locations.toLowerCase();
+
+            fetch(`http://localhost:3000/api/rescue-teams/working-areas?locations=${locations}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('teams-in-areas-table-body');
+                    tableBody.innerHTML = '';
+                    data.forEach(team => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${team.team_id}</td>
+                            <td>${team.team_name}</td>
+                            <td>${team.specialization}</td>
+                            <td>${team.location}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching teams in specified areas:', error);
+                    const tableBody = document.getElementById('teams-in-areas-table-body');
                     tableBody.innerHTML = '<tr><td colspan="4">Failed to load data.</td></tr>';
                 });
         }
