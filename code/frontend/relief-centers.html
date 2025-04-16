@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relief Centers</title>
     <link rel="stylesheet" href="assets/styles/styles.css">
 </head>
+
 <body>
     <!-- Header -->
     <header>
@@ -39,8 +41,10 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Relief Center ID</th>
                         <th>Center Name</th>
                         <th>Location</th>
+                        <th>Capacity</th>
                     </tr>
                 </thead>
                 <tbody id="relief-center-table-body">
@@ -49,16 +53,82 @@
             </table>
         </section>
 
+        <!-- Section: Add Relief Center -->
+        <section id="add-relief-center">
+            <h2>Add a New Relief Center</h2>
+            <form id="reliefCenterForm" onsubmit="addReliefCenter(event)">
+                <input type="text" id="center_name" placeholder="Center Name" required>
+                <input type="text" id="center_location" placeholder="Location" required>
+                <input type="number" id="center_capacity" placeholder="Capacity" min="1" required>
+                <textarea id="available_resources" placeholder="Available Resources (Optional)"></textarea>
+                <button type="submit" class="site-button">Add Relief Center</button>
+            </form>
+        </section>
+        <!-- Section: Update or Delete Relief Center -->
+<section id="update-delete-relief-center">
+    <h2>Update or Delete Relief Center</h2>
+    <form id="updateDeleteReliefCenterForm">
+        <div class="form-group">
+            <label for="reliefCenterId">Relief Center ID:</label>
+            <input type="number" id="reliefCenterId" placeholder="Enter Relief Center ID" required>
+        </div>
+        <div class="button-group">
+            <button type="button" class="site-button" onclick="confirmDeleteReliefCenter()">Delete</button>
+            <button type="button" class="site-button" onclick="openUpdateReliefCenterModal()">Update</button>
+        </div>
+    </form>
+</section>
+
+<!-- Modal for Update Relief Center -->
+<div id="updateReliefCenterModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeUpdateReliefCenterModal()">&times;</span>
+        <h2>Update Relief Center</h2>
+        <form id="updateReliefCenterForm">
+            <div class="form-group">
+                <input type="text" id="modalUpdateCenterName" placeholder="Center Name">
+            </div>
+            <div class="form-group">
+                <input type="text" id="modalUpdateCenterLocation" placeholder="Location">
+            </div>
+            <div class="form-group">
+                <input type="number" id="modalUpdateCenterCapacity" placeholder="Capacity" min="1">
+            </div>
+            <div class="form-group">
+                <textarea id="modalUpdateAvailableResources" placeholder="Available Resources (Optional)"></textarea>
+            </div>
+            <div class="button-group">
+                <button type="button" class="site-button" onclick="submitUpdateReliefCenter()">Yes</button>
+                <button type="button" class="site-button" onclick="closeUpdateReliefCenterModal()">No</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Confirmation Dialog for Delete -->
+<div id="deleteReliefCenterConfirmation" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeDeleteReliefCenterConfirmation()">&times;</span>
+        <h2>Are you sure you want to delete this relief center?</h2>
+        <div class="button-group">
+            <button type="button" class="site-button" onclick="deleteReliefCenter()">Yes</button>
+            <button type="button" class="site-button" onclick="closeDeleteReliefCenterConfirmation()">No</button>
+        </div>
+    </div>
+</div>
+
         <!-- Section: Testimonials -->
         <section id="testimonials">
             <h2>What People Say</h2>
             <div class="testimonial-container">
                 <article class="testimonial">
-                    <p>"The relief center provided us with food and shelter during the flood. We are so thankful for their support!"</p>
+                    <p>"The relief center provided us with food and shelter during the flood. We are so thankful for
+                        their support!"</p>
                     <h4>- Flood Victim</h4>
                 </article>
                 <article class="testimonial">
-                    <p>"The staff at the relief center were incredibly kind and helpful. They made a difficult time much easier for us."</p>
+                    <p>"The staff at the relief center were incredibly kind and helpful. They made a difficult time much
+                        easier for us."</p>
                     <h4>- Earthquake Survivor</h4>
                 </article>
             </div>
@@ -69,7 +139,8 @@
             <h2>Frequently Asked Questions</h2>
             <div class="faq-item">
                 <h3>What services do relief centers provide?</h3>
-                <p>Relief centers provide essential services such as food, water, medical aid, and temporary shelter during disasters.</p>
+                <p>Relief centers provide essential services such as food, water, medical aid, and temporary shelter
+                    during disasters.</p>
             </div>
         </section>
     </main>
@@ -78,11 +149,7 @@
     <footer>
         <div class="footer-content">
             <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
-            <p>Follow us on: 
-                <a href="https://facebook.com" target="_blank">Facebook</a> | 
-                <a href="https://twitter.com" target="_blank">Twitter</a> | 
-                <a href="https://instagram.com" target="_blank">Instagram</a>
-            </p>
+
         </div>
     </footer>
 
@@ -96,8 +163,10 @@
                     data.forEach(center => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
+                            <td>${center.relief_center_id}</td>
                             <td>${center.name}</td>
                             <td>${center.location}</td>
+                            <td>${center.capacity}</td>
                         `;
                         tableBody.appendChild(row);
                     });
@@ -109,9 +178,150 @@
                 });
         }
 
+        function addReliefCenter(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('center_name').value;
+            const location = document.getElementById('center_location').value;
+            const capacity = document.getElementById('center_capacity').value;
+            const resources = document.getElementById('available_resources').value;
+
+            fetch('http://localhost:3000/api/relief-centers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    Name: name,
+                    Location: location,
+                    Capacity: capacity,
+                    Available_Resources: resources || null,
+                }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Relief center added successfully!');
+                        document.getElementById('reliefCenterForm').reset();
+                        fetchReliefCenters(); // Refresh the relief centers list
+                    } else {
+                        alert('Failed to add relief center.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding relief center:', error);
+                    alert('Error adding relief center.');
+                });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             fetchReliefCenters();
         });
+        // Open the update modal and populate fields
+function openUpdateReliefCenterModal() {
+    const reliefCenterId = document.getElementById('reliefCenterId').value;
+    if (!reliefCenterId) {
+        alert('Please enter a Relief Center ID to update.');
+        return;
+    }
+
+    fetch(`http://localhost:3000/api/relief-centers/${reliefCenterId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Relief center not found');
+            }
+            return response.json();
+        })
+        .then(center => {
+            document.getElementById('modalUpdateCenterName').value = center.name;
+            document.getElementById('modalUpdateCenterLocation').value = center.location;
+            document.getElementById('modalUpdateCenterCapacity').value = center.capacity;
+            document.getElementById('modalUpdateAvailableResources').value = center.available_resources || '';
+
+            document.getElementById('updateReliefCenterModal').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error fetching relief center:', error);
+            alert('Relief center not found.');
+        });
+}
+
+// Close the update modal
+function closeUpdateReliefCenterModal() {
+    document.getElementById('updateReliefCenterModal').style.display = 'none';
+}
+
+// Submit the update
+function submitUpdateReliefCenter() {
+    const reliefCenterId = document.getElementById('reliefCenterId').value;
+    const name = document.getElementById('modalUpdateCenterName').value;
+    const location = document.getElementById('modalUpdateCenterLocation').value;
+    const capacity = document.getElementById('modalUpdateCenterCapacity').value;
+    const resources = document.getElementById('modalUpdateAvailableResources').value;
+
+    fetch(`http://localhost:3000/api/relief-centers/${reliefCenterId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            Name: name,
+            Location: location,
+            Capacity: capacity,
+            Available_Resources: resources || null,
+        }),
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Relief center updated successfully!');
+                fetchReliefCenters();
+                closeUpdateReliefCenterModal();
+            } else {
+                alert('Failed to update relief center.');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating relief center:', error);
+            alert('Error updating relief center.');
+        });
+}
+
+// Open the delete confirmation dialog
+function confirmDeleteReliefCenter() {
+    const reliefCenterId = document.getElementById('reliefCenterId').value;
+    if (!reliefCenterId) {
+        alert('Please enter a Relief Center ID to delete.');
+        return;
+    }
+    document.getElementById('deleteReliefCenterConfirmation').style.display = 'block';
+}
+
+// Close the delete confirmation dialog
+function closeDeleteReliefCenterConfirmation() {
+    document.getElementById('deleteReliefCenterConfirmation').style.display = 'none';
+}
+
+// Delete the relief center
+function deleteReliefCenter() {
+    const reliefCenterId = document.getElementById('reliefCenterId').value;
+
+    fetch(`http://localhost:3000/api/relief-centers/${reliefCenterId}`, {
+        method: 'DELETE',
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Relief center deleted successfully!');
+                fetchReliefCenters();
+                closeDeleteReliefCenterConfirmation();
+            } else {
+                alert('Failed to delete relief center.');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting relief center:', error);
+            alert('Error deleting relief center.');
+        });
+}
     </script>
 </body>
+
 </html>

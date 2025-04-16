@@ -50,6 +50,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Victim ID</th>
                         <th>Name</th>
                         <th>Age</th>
                         <th>Gender</th>
@@ -63,6 +64,101 @@
                 </tbody>
             </table>
         </section>
+        <!-- Section: Add Victim -->
+        <section id="add-victim">
+            <h2>Add a New Victim</h2>
+            <form id="victimForm" onsubmit="addVictim(event)">
+                <input type="text" id="victim_name" placeholder="Name" required>
+                <input type="number" id="victim_age" placeholder="Age" min="0" required>
+                <select id="victim_gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <select id="victim_status" required onchange="handleStatusChange()">
+                    <option value="">Select Status</option>
+                    <option value="Rescued">Rescued</option>
+                    <option value="Safe">Safe</option>
+                    <option value="Injured">Injured</option>
+                    <option value="Missing">Missing</option>
+                    <option value="Deceased">Deceased</option>
+                </select>
+                <input type="number" id="disaster_id" placeholder="Disaster ID (Optional)">
+                <input type="number" id="relief_center_id" placeholder="Relief Center ID (Optional)">
+                <button type="submit" class="site-button">Add Victim</button>
+            </form>
+        </section>
+        <!-- Section: Update or Delete Victim -->
+        <section id="update-delete-victim">
+            <h2>Update or Delete Victim</h2>
+            <form id="updateDeleteVictimForm">
+                <div class="form-group">
+                    <label for="victimId">Victim ID:</label>
+                    <input type="number" id="victimId" placeholder="Enter Victim ID" required>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="site-button" onclick="confirmDeleteVictim()">Delete</button>
+                    <button type="button" class="site-button" onclick="openUpdateVictimModal()">Update</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Modal for Update Victim -->
+        <div id="updateVictimModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeUpdateVictimModal()">&times;</span>
+                <h2>Update Victim</h2>
+                <form id="updateVictimForm">
+                    <div class="form-group">
+                        <input type="text" id="modalUpdateVictimName" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="modalUpdateVictimAge" placeholder="Age" min="0">
+                    </div>
+                    <div class="form-group">
+                        <select id="modalUpdateVictimGender">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select id="modalUpdateVictimStatus">
+                            <option value="">Select Status</option>
+                            <option value="Rescued">Rescued</option>
+                            <option value="Safe">Safe</option>
+                            <option value="Injured">Injured</option>
+                            <option value="Missing">Missing</option>
+                            <option value="Deceased">Deceased</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="modalUpdateDisasterId" placeholder="Disaster ID (Optional)">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="modalUpdateReliefCenterId" placeholder="Relief Center ID (Optional)">
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="site-button" onclick="submitUpdateVictim()">Yes</button>
+                        <button type="button" class="site-button" onclick="closeUpdateVictimModal()">No</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Confirmation Dialog for Delete -->
+        <div id="deleteVictimConfirmation" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeDeleteVictimConfirmation()">&times;</span>
+                <h2>Are you sure you want to delete this victim?</h2>
+                <div class="button-group">
+                    <button type="button" class="site-button" onclick="deleteVictim()">Yes</button>
+                    <button type="button" class="site-button" onclick="closeDeleteVictimConfirmation()">No</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Section: Testimonials -->
         <section id="testimonials">
@@ -93,11 +189,7 @@
     <footer>
         <div class="footer-content">
             <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
-            <p>Follow us on: 
-                <a href="https://facebook.com" target="_blank">Facebook</a> | 
-                <a href="https://twitter.com" target="_blank">Twitter</a> | 
-                <a href="https://instagram.com" target="_blank">Instagram</a>
-            </p>
+        
         </div>
     </footer>
 
@@ -112,6 +204,7 @@
                         const reliefCenterId = victim.relief_center_id !== null ? victim.relief_center_id : 'Not assigned';
                         const row = document.createElement('tr');
                         row.innerHTML = `
+                            <td>${victim.victim_id}</td>
                             <td>${victim.name}</td>
                             <td>${victim.age}</td>
                             <td>${victim.gender}</td>
@@ -139,6 +232,7 @@
                         const reliefCenterId = victim.relief_center_id !== null ? victim.relief_center_id : 'Not assigned';
                         const row = document.createElement('tr');
                         row.innerHTML = `
+                            <td>${victim.victim_id}</td>
                             <td>${victim.name}</td>
                             <td>${victim.age}</td>
                             <td>${victim.gender}</td>
@@ -159,6 +253,168 @@
         document.addEventListener('DOMContentLoaded', () => {
             fetchAllVictims();
         });
+
+        function addVictim(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('victim_name').value;
+            const age = document.getElementById('victim_age').value;
+            const gender = document.getElementById('victim_gender').value;
+            const status = document.getElementById('victim_status').value;
+            const disasterId = document.getElementById('disaster_id').value || null;
+            const reliefCenterId = document.getElementById('relief_center_id').value || null;
+
+            fetch('http://localhost:3000/api/victims', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    Name: name,
+                    Age: age,
+                    Gender: gender,
+                    Status: status,
+                    Disaster_ID: disasterId,
+                    Relief_Center_ID: reliefCenterId,
+                }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Victim added successfully!');
+                        document.getElementById('victimForm').reset();
+                        fetchAllVictims(); // Refresh the victims list
+                    } else {
+                        alert('Failed to add victim.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding victim:', error);
+                    alert('Error adding victim.');
+                });
+        }
+
+        function handleStatusChange() {
+        const status = document.getElementById('victim_status').value;
+        const reliefCenterField = document.getElementById('relief_center_id');
+
+        if (status === 'Missing' || status === 'Deceased') {
+            reliefCenterField.value = ''; // Clear the field
+            reliefCenterField.disabled = true; // Disable the field
+        } else {
+            reliefCenterField.disabled = false; // Enable the field
+        }
+    }
+    // Open the update modal and populate fields
+function openUpdateVictimModal() {
+    const victimId = document.getElementById('victimId').value;
+    if (!victimId) {
+        alert('Please enter a Victim ID to update.');
+        return;
+    }
+
+    fetch(`http://localhost:3000/api/victims/${victimId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Victim not found');
+            }
+            return response.json();
+        })
+        .then(victim => {
+            document.getElementById('modalUpdateVictimName').value = victim.name;
+            document.getElementById('modalUpdateVictimAge').value = victim.age;
+            document.getElementById('modalUpdateVictimGender').value = victim.gender;
+            document.getElementById('modalUpdateVictimStatus').value = victim.status;
+            document.getElementById('modalUpdateDisasterId').value = victim.disaster_id || '';
+            document.getElementById('modalUpdateReliefCenterId').value = victim.relief_center_id || '';
+
+            document.getElementById('updateVictimModal').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error fetching victim:', error);
+            alert('Victim not found.');
+        });
+}
+
+// Close the update modal
+function closeUpdateVictimModal() {
+    document.getElementById('updateVictimModal').style.display = 'none';
+}
+
+// Submit the update
+function submitUpdateVictim() {
+    const victimId = document.getElementById('victimId').value;
+    const name = document.getElementById('modalUpdateVictimName').value;
+    const age = document.getElementById('modalUpdateVictimAge').value;
+    const gender = document.getElementById('modalUpdateVictimGender').value;
+    const status = document.getElementById('modalUpdateVictimStatus').value;
+    const disasterId = document.getElementById('modalUpdateDisasterId').value || null;
+    const reliefCenterId = document.getElementById('modalUpdateReliefCenterId').value || null;
+
+    fetch(`http://localhost:3000/api/victims/${victimId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            Name: name,
+            Age: age,
+            Gender: gender,
+            Status: status,
+            Disaster_ID: disasterId,
+            Relief_Center_ID: reliefCenterId,
+        }),
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Victim updated successfully!');
+                fetchAllVictims();
+                closeUpdateVictimModal();
+            } else {
+                alert('Failed to update victim.');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating victim:', error);
+            alert('Error updating victim.');
+        });
+}
+
+    // Open the delete confirmation dialog
+    function confirmDeleteVictim() {
+        const victimId = document.getElementById('victimId').value;
+        if (!victimId) {
+            alert('Please enter a Victim ID to delete.');
+            return;
+        }
+        document.getElementById('deleteVictimConfirmation').style.display = 'block';
+    }
+
+    // Close the delete confirmation dialog
+    function closeDeleteVictimConfirmation() {
+        document.getElementById('deleteVictimConfirmation').style.display = 'none';
+    }
+
+    // Delete the victim
+    function deleteVictim() {
+        const victimId = document.getElementById('victimId').value;
+
+        fetch(`http://localhost:3000/api/victims/${victimId}`, {
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Victim deleted successfully!');
+                    fetchAllVictims();
+                    closeDeleteVictimConfirmation();
+                } else {
+                    alert('Failed to delete victim.');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting victim:', error);
+                alert('Error deleting victim.');
+            });
+    }
     </script>
 </body>
 </html>

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volunteers</title>
     <link rel="stylesheet" href="assets/styles/styles.css">
 </head>
+
 <body>
     <!-- Header -->
     <header>
@@ -47,6 +49,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Volunteer ID</th> <!-- New column for Volunteer ID -->
                         <th>Name</th>
                         <th>Skills</th>
                         <th>Contact Number</th>
@@ -75,14 +78,90 @@
             </table>
         </section>
 
+        <!-- Section: Add Volunteer -->
+        <section id="add-volunteer">
+            <h2>Add a New Volunteer</h2>
+            <form id="volunteerForm" onsubmit="addVolunteer(event)">
+                <input type="text" id="volunteer_name" placeholder="Name" required>
+                <input type="text" id="skills" placeholder="Skills" required>
+                <input type="text" id="contact_number" placeholder="Contact Number" required>
+                <select id="availability" required>
+                    <option value="">Select Availability</option>
+                    <option value="true">Available</option>
+                    <option value="false">Unavailable</option>
+                </select>
+                <button type="submit" class="site-button">Add Volunteer</button>
+            </form>
+        </section>
+
+        <!-- Section: Update or Delete Volunteer -->
+        <section id="update-delete-volunteer">
+            <h2>Update or Delete Volunteer</h2>
+            <form id="updateDeleteVolunteerForm">
+                <div class="form-group">
+                    <label for="volunteerId">Volunteer ID:</label>
+                    <input type="number" id="volunteerId" placeholder="Enter Volunteer ID" required>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="site-button" onclick="confirmDeleteVolunteer()">Delete</button>
+                    <button type="button" class="site-button" onclick="openUpdateVolunteerModal()">Update</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Modal for Update Volunteer -->
+        <div id="updateVolunteerModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeUpdateVolunteerModal()">&times;</span>
+                <h2>Update Volunteer</h2>
+                <form id="updateVolunteerForm">
+                    <div class="form-group">
+                        <input type="text" id="modalUpdateVolunteerName" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="modalUpdateSkills" placeholder="Skills">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="modalUpdateContactNumber" placeholder="Contact Number">
+                    </div>
+                    <div class="form-group">
+                        <select id="modalUpdateAvailability">
+                            <option value="">Select Availability</option>
+                            <option value="true">Available</option>
+                            <option value="false">Unavailable</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="site-button" onclick="submitUpdateVolunteer()">Yes</button>
+                        <button type="button" class="site-button" onclick="closeUpdateVolunteerModal()">No</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Confirmation Dialog for Delete -->
+        <div id="deleteVolunteerConfirmation" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeDeleteVolunteerConfirmation()">&times;</span>
+                <h2>Are you sure you want to delete this volunteer?</h2>
+                <div class="button-group">
+                    <button type="button" class="site-button" onclick="deleteVolunteer()">Yes</button>
+                    <button type="button" class="site-button" onclick="closeDeleteVolunteerConfirmation()">No</button>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- Footer -->
     <footer>
         <div class="footer-content">
             <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
+
         </div>
     </footer>
+
+    <script src="js/app.js"></script>
 
     <!-- JavaScript -->
     <script>
@@ -95,18 +174,19 @@
                     data.forEach(volunteer => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${volunteer.name}</td> 
-                            <td>${volunteer.skills}</td> 
-                            <td>${volunteer.contact_number}</td> 
-                            <td>${volunteer.availability ? 'Available' : 'Unavailable'}</td> 
-                        `;
+                    <td>${volunteer.volunteer_id}</td> <!-- New column for Volunteer ID -->
+                    <td>${volunteer.name}</td>
+                    <td>${volunteer.skills}</td>
+                    <td>${volunteer.contact_number}</td>
+                    <td>${volunteer.availability ? 'Available' : 'Unavailable'}</td>
+                `;
                         tableBody.appendChild(row);
                     });
                 })
                 .catch(error => {
                     console.error('Error fetching volunteers:', error);
                     const tableBody = document.getElementById('volunteer-table-body');
-                    tableBody.innerHTML = '<tr><td colspan="4">Failed to load data.</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="5">Failed to load data.</td></tr>';
                 });
         }
 
@@ -119,18 +199,19 @@
                     data.forEach(volunteer => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${volunteer.name}</td> 
-                            <td>${volunteer.skills}</td> 
-                            <td>${volunteer.contact_number}</td> 
-                            <td>${volunteer.availability ? 'Available' : 'Unavailable'}</td> 
-                        `;
+                    <td>${volunteer.volunteer_id}</td> <!-- New column for Volunteer ID -->
+                    <td>${volunteer.name}</td>
+                    <td>${volunteer.skills}</td>
+                    <td>${volunteer.contact_number}</td>
+                    <td>${volunteer.availability ? 'Available' : 'Unavailable'}</td>
+                `;
                         tableBody.appendChild(row);
                     });
                 })
                 .catch(error => {
                     console.error('Error fetching volunteers by availability:', error);
                     const tableBody = document.getElementById('volunteer-table-body');
-                    tableBody.innerHTML = '<tr><td colspan="4">Failed to load data.</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="5">Failed to load data.</td></tr>';
                 });
         }
 
@@ -143,6 +224,7 @@
                     data.forEach(volunteer => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
+                        <td>${volunteer.volunteer_id}</td> <!-- New column for Volunteer ID -->
                             <td>${volunteer.name}</td> 
                             <td>${volunteer.skills}</td> 
                             <td>${volunteer.contact_number}</td> 
@@ -180,6 +262,147 @@
                 });
         }
 
+        function addVolunteer(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('volunteer_name').value;
+            const skills = document.getElementById('skills').value;
+            const contactNumber = document.getElementById('contact_number').value;
+            const availability = document.getElementById('availability').value;
+
+            fetch('http://localhost:3000/api/volunteers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    Name: name,
+                    Skills: skills,
+                    Contact_Number: contactNumber,
+                    Availability: availability === 'true',
+                }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Volunteer added successfully!');
+                        document.getElementById('volunteerForm').reset();
+                        fetchAllVolunteers(); // Refresh the volunteers list
+                    } else {
+                        alert('Failed to add volunteer.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding volunteer:', error);
+                    alert('Error adding volunteer.');
+                });
+        }
+
+        // Open the update modal and populate fields
+        function openUpdateVolunteerModal() {
+            const volunteerId = document.getElementById('volunteerId').value;
+            if (!volunteerId) {
+                alert('Please enter a Volunteer ID to update.');
+                return;
+            }
+
+            fetch(`http://localhost:3000/api/volunteers/${volunteerId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Volunteer not found');
+                    }
+                    return response.json();
+                })
+                .then(volunteer => {
+                    document.getElementById('modalUpdateVolunteerName').value = volunteer.name;
+                    document.getElementById('modalUpdateSkills').value = volunteer.skills;
+                    document.getElementById('modalUpdateContactNumber').value = volunteer.contact_number;
+                    document.getElementById('modalUpdateAvailability').value = volunteer.availability.toString();
+
+                    document.getElementById('updateVolunteerModal').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching volunteer:', error);
+                    alert('Volunteer not found.');
+                });
+        }
+
+        // Close the update modal
+        function closeUpdateVolunteerModal() {
+            document.getElementById('updateVolunteerModal').style.display = 'none';
+        }
+
+        // Submit the update
+        function submitUpdateVolunteer() {
+            const volunteerId = document.getElementById('volunteerId').value;
+            const name = document.getElementById('modalUpdateVolunteerName').value;
+            const skills = document.getElementById('modalUpdateSkills').value;
+            const contactNumber = document.getElementById('modalUpdateContactNumber').value;
+            const availability = document.getElementById('modalUpdateAvailability').value;
+
+            fetch(`http://localhost:3000/api/volunteers/${volunteerId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    skills: skills,
+                    contact_number: contactNumber,
+                    availability: availability === 'true',
+                }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Volunteer updated successfully!');
+                        fetchVolunteers();
+                        closeUpdateVolunteerModal();
+                    } else {
+                        alert('Failed to update volunteer.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating volunteer:', error);
+                    alert('Error updating volunteer.');
+                });
+        }
+
+        // Open the delete confirmation dialog
+        function confirmDeleteVolunteer() {
+            const volunteerId = document.getElementById('volunteerId').value;
+            if (!volunteerId) {
+                alert('Please enter a Volunteer ID to delete.');
+                return;
+            }
+            document.getElementById('deleteVolunteerConfirmation').style.display = 'block';
+        }
+
+        // Close the delete confirmation dialog
+        function closeDeleteVolunteerConfirmation() {
+            document.getElementById('deleteVolunteerConfirmation').style.display = 'none';
+        }
+
+        // Delete the volunteer
+        function deleteVolunteer() {
+            const volunteerId = document.getElementById('volunteerId').value;
+
+            fetch(`http://localhost:3000/api/volunteers/${volunteerId}`, {
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Volunteer deleted successfully!');
+                        fetchVolunteers();
+                        closeDeleteVolunteerConfirmation();
+                    } else {
+                        alert('Failed to delete volunteer.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting volunteer:', error);
+                    alert('Error deleting volunteer.');
+                });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             fetchAllVolunteers();
             fetchActiveRescueVolunteers();
@@ -187,4 +410,5 @@
     </script>
 
 </body>
+
 </html>

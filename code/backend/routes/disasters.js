@@ -63,6 +63,20 @@ router.get('/missing-victims', async (req, res) => {
     }
 });
 
+// GET a specific disaster by ID
+router.get('/:disaster_id', async (req, res) => {
+    const { disaster_id } = req.params;
+    try {
+        const result = await pool.query('SELECT * FROM disaster WHERE disaster_id = $1', [disaster_id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Disaster not found' });
+        }
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error('Error fetching disaster by ID:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 // POST a new disaster
 router.post('/', async (req, res) => {

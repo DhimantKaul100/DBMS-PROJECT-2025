@@ -47,6 +47,7 @@
                 <table>
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Type</th>
                             <th>Date</th>
                             <th>Location</th>
@@ -120,6 +121,69 @@
                 <button type="submit">Add Disaster</button>
             </form>
         </section>
+
+        <!-- Section: Update or Delete Disaster -->
+        <section id="update-delete-disaster">
+            <h2>Update or Delete Disaster</h2>
+            <form id="updateDeleteForm">
+                <div class="form-group">
+                    <label for="disasterId">Disaster ID:</label>
+                    <input type="number" id="disasterId" placeholder="Enter Disaster ID" required>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="site-button" onclick="confirmDeleteDisaster()">Delete</button>
+                    <button type="button" class="site-button" onclick="openUpdateModal()">Update</button>
+                </div>
+            </form>
+        </section>
+        <!-- Modal for Update -->
+        <div id="updateModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeUpdateModal()">&times;</span>
+                <h2>Update Disaster</h2>
+                <form id="updateForm">
+                    <div class="form-group">
+                        <input type="text" id="modalUpdateDisasterType" placeholder="Type">
+                    </div>
+                    <div class="form-group">
+                        <input type="date" id="modalUpdateDate">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="modalUpdateLocation" placeholder="Location">
+                    </div>
+                    <div class="form-group">
+                        <input type="number" id="modalUpdateSeverityLevel" placeholder="Severity (1-10)" min="1"
+                            max="10">
+                    </div>
+                    <div class="form-group">
+                        <textarea id="modalUpdateDescription" placeholder="Description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <select id="modalUpdateStatus">
+                            <option value="">Status</option>
+                            <option value="Ongoing">Ongoing</option>
+                            <option value="Not Ongoing">Not Ongoing</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="site-button" onclick="submitUpdate()">Yes</button>
+                        <button type="button" class="site-button" onclick="closeUpdateModal()">No</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Confirmation Dialog for Delete -->
+        <div id="deleteConfirmation" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeDeleteConfirmation()">&times;</span>
+                <h2>Are you sure you want to delete this disaster?</h2>
+                <div class="button-group">
+                    <button type="button" class="site-button" onclick="deleteDisaster()">Yes</button>
+                    <button type="button" class="site-button" onclick="closeDeleteConfirmation()">No</button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -128,6 +192,8 @@
             <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
         </div>
     </footer>
+
+    <script src="js/app.js"></script>
 
     <script>
         function fetchDisasters(filter) {
@@ -143,6 +209,9 @@
                     tableBody.innerHTML = '';
                     data.forEach(disaster => {
                         const row = document.createElement('tr');
+                        const idCell = document.createElement('td');
+                        idCell.textContent = disaster.disaster_id;
+                        row.appendChild(idCell);
 
                         const typeCell = document.createElement('td');
                         typeCell.textContent = disaster.disaster_type;
@@ -267,6 +336,122 @@
                     console.error('Error fetching missing victims:', error);
                     const tableBody = document.getElementById('missing-victims-table-body');
                     tableBody.innerHTML = '<tr><td colspan="4">Failed to load data.</td></tr>';
+                });
+        }
+
+        // Open the update modal and populate fields
+        // Open the update modal and populate fields
+        function openUpdateModal() {
+            const disasterId = document.getElementById('disasterId').value;
+            if (!disasterId) {
+                alert('Please enter a Disaster ID to update.');
+                return;
+            }
+
+            fetch(`http://localhost:3000/api/disasters/${disasterId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Disaster not found');
+                    }
+                    return response.json();
+                })
+                .then(disaster => {
+                    document.getElementById('modalUpdateDisasterType').value = disaster.disaster_type;
+
+                    // Use the date string directly from the backend (assuming it's in yyyy-mm-dd format)
+                    document.getElementById('modalUpdateDate').value = disaster.date.split('T')[0];
+
+                    document.getElementById('modalUpdateLocation').value = disaster.location;
+                    document.getElementById('modalUpdateSeverityLevel').value = disaster.severity_level;
+                    document.getElementById('modalUpdateDescription').value = disaster.description;
+                    document.getElementById('modalUpdateStatus').value = disaster.status;
+
+                    document.getElementById('updateModal').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching disaster:', error);
+                    alert('Disaster not found.');
+                });
+        }
+
+        // Close the update modal
+        function closeUpdateModal() {
+            document.getElementById('updateModal').style.display = 'none';
+        }
+
+        // Submit the update
+        function submitUpdate() {
+            const disasterId = document.getElementById('disasterId').value;
+            const disasterType = document.getElementById('modalUpdateDisasterType').value;
+            const date = document.getElementById('modalUpdateDate').value;
+            const location = document.getElementById('modalUpdateLocation').value;
+            const severityLevel = document.getElementById('modalUpdateSeverityLevel').value;
+            const description = document.getElementById('modalUpdateDescription').value;
+            const status = document.getElementById('modalUpdateStatus').value;
+
+            fetch(`http://localhost:3000/api/disasters/${disasterId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    disaster_type: disasterType,
+                    date: date,
+                    location: location,
+                    severity_level: severityLevel,
+                    description: description,
+                    status: status,
+                }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Disaster updated successfully!');
+                        fetchDisasters('all');
+                        closeUpdateModal();
+                    } else {
+                        alert('Failed to update disaster.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating disaster:', error);
+                    alert('Error updating disaster.');
+                });
+        }
+
+        // Open the delete confirmation dialog
+        function confirmDeleteDisaster() {
+            const disasterId = document.getElementById('disasterId').value;
+            if (!disasterId) {
+                alert('Please enter a Disaster ID to delete.');
+                return;
+            }
+            document.getElementById('deleteConfirmation').style.display = 'block';
+        }
+
+        // Close the delete confirmation dialog
+        function closeDeleteConfirmation() {
+            document.getElementById('deleteConfirmation').style.display = 'none';
+        }
+
+        // Delete the disaster
+        function deleteDisaster() {
+            const disasterId = document.getElementById('disasterId').value;
+
+            fetch(`http://localhost:3000/api/disasters/${disasterId}`, {
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Disaster deleted successfully!');
+                        fetchDisasters('all');
+                        closeDeleteConfirmation();
+                    } else {
+                        alert('Failed to delete disaster.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting disaster:', error);
+                    alert('Error deleting disaster.');
                 });
         }
 

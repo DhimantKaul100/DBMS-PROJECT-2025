@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donations</title>
     <link rel="stylesheet" href="assets/styles/styles.css">
 </head>
+
 <body>
     <!-- Header -->
     <header>
@@ -39,6 +41,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Donation ID</th>
                         <th>Donor Name</th>
                         <th>Amount</th>
                         <th>Purpose</th>
@@ -66,16 +69,82 @@
             </table>
         </section>
 
+        <!-- Section: Add Donation -->
+        <section id="add-donation">
+            <h2>Add a New Donation</h2>
+            <form id="donationForm" onsubmit="addDonation(event)">
+                <input type="text" id="donor_name" placeholder="Donor Name" required>
+                <input type="number" id="amount" placeholder="Amount" min="1" required>
+                <textarea id="purpose" placeholder="Purpose" required></textarea>
+                <input type="number" id="relief_center_id" placeholder="Relief Center ID (Optional)">
+                <button type="submit" class="site-button">Add Donation</button>
+            </form>
+        </section>
+
+        <!-- Section: Update or Delete Donation -->
+<section id="update-delete-donation">
+    <h2>Update or Delete Donation</h2>
+    <form id="updateDeleteDonationForm">
+        <div class="form-group">
+            <label for="donationId">Donation ID:</label>
+            <input type="number" id="donationId" placeholder="Enter Donation ID" required>
+        </div>
+        <div class="button-group">
+            <button type="button" class="site-button" onclick="confirmDeleteDonation()">Delete</button>
+            <button type="button" class="site-button" onclick="openUpdateDonationModal()">Update</button>
+        </div>
+    </form>
+</section>
+
+<!-- Modal for Update Donation -->
+<div id="updateDonationModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeUpdateDonationModal()">&times;</span>
+        <h2>Update Donation</h2>
+        <form id="updateDonationForm">
+            <div class="form-group">
+                <input type="text" id="modalUpdateDonorName" placeholder="Donor Name">
+            </div>
+            <div class="form-group">
+                <input type="number" id="modalUpdateAmount" placeholder="Amount" min="1">
+            </div>
+            <div class="form-group">
+                <textarea id="modalUpdatePurpose" placeholder="Purpose"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="number" id="modalUpdateReliefCenterId" placeholder="Relief Center ID (Optional)">
+            </div>
+            <div class="button-group">
+                <button type="button" class="site-button" onclick="submitUpdateDonation()">Yes</button>
+                <button type="button" class="site-button" onclick="closeUpdateDonationModal()">No</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Confirmation Dialog for Delete -->
+<div id="deleteDonationConfirmation" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeDeleteDonationConfirmation()">&times;</span>
+        <h2>Are you sure you want to delete this donation?</h2>
+        <div class="button-group">
+            <button type="button" class="site-button" onclick="deleteDonation()">Yes</button>
+            <button type="button" class="site-button" onclick="closeDeleteDonationConfirmation()">No</button>
+        </div>
+    </div>
+</div>
         <!-- Section: Testimonials -->
         <section id="testimonials">
             <h2>What People Say</h2>
             <div class="testimonial-container">
                 <article class="testimonial">
-                    <p>"Thanks to the donations, we were able to rebuild our home after the flood. We are forever grateful!"</p>
+                    <p>"Thanks to the donations, we were able to rebuild our home after the flood. We are forever
+                        grateful!"</p>
                     <h4>- A Flood Victim</h4>
                 </article>
                 <article class="testimonial">
-                    <p>"The support we received during the earthquake was overwhelming. Thank you for your generosity!"</p>
+                    <p>"The support we received during the earthquake was overwhelming. Thank you for your generosity!"
+                    </p>
                     <h4>- Earthquake Survivor</h4>
                 </article>
             </div>
@@ -89,6 +158,8 @@
         </div>
     </footer>
 
+    <script src="js/app.js"></script>
+
     <script>
         function fetchDonations() {
             fetch('http://localhost:3000/api/donations')
@@ -99,6 +170,7 @@
                     data.forEach(donation => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
+                            <td>${donation.donation_id}</td>
                             <td>${donation.donor_name}</td>
                             <td>${donation.amount}</td>
                             <td>${donation.purpose}</td>
@@ -135,10 +207,153 @@
                 });
         }
 
+        function addDonation(event) {
+            event.preventDefault();
+
+            const donorName = document.getElementById('donor_name').value;
+            const amount = document.getElementById('amount').value;
+            const purpose = document.getElementById('purpose').value;
+            const reliefCenterId = document.getElementById('relief_center_id').value || null;
+
+            fetch('http://localhost:3000/api/donations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    Donor_Name: donorName,
+                    Amount: amount,
+                    Purpose: purpose,
+                    Relief_Center_ID: reliefCenterId,
+                }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Donation added successfully!');
+                        document.getElementById('donationForm').reset();
+                        fetchDonations(); // Refresh the donations list
+                        fetchTotalDonationsByReliefCenter(); // Refresh the totals
+                    } else {
+                        alert('Failed to add donation.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding donation:', error);
+                    alert('Error adding donation.');
+                });
+        }// Open the update modal and populate fields
+function openUpdateDonationModal() {
+    const donationId = document.getElementById('donationId').value;
+    if (!donationId) {
+        alert('Please enter a Donation ID to update.');
+        return;
+    }
+
+    fetch(`http://localhost:3000/api/donations/${donationId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Donation not found');
+            }
+            return response.json();
+        })
+        .then(donation => {
+            document.getElementById('modalUpdateDonorName').value = donation.donor_name;
+            document.getElementById('modalUpdateAmount').value = donation.amount;
+            document.getElementById('modalUpdatePurpose').value = donation.purpose;
+            document.getElementById('modalUpdateReliefCenterId').value = donation.relief_center_id || '';
+
+            document.getElementById('updateDonationModal').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error fetching donation:', error);
+            alert('Donation not found.');
+        });
+}
+
+// Close the update modal
+function closeUpdateDonationModal() {
+    document.getElementById('updateDonationModal').style.display = 'none';
+}
+
+// Submit the update
+function submitUpdateDonation() {
+    const donationId = document.getElementById('donationId').value;
+    const donorName = document.getElementById('modalUpdateDonorName').value;
+    const amount = document.getElementById('modalUpdateAmount').value;
+    const purpose = document.getElementById('modalUpdatePurpose').value;
+    const reliefCenterId = document.getElementById('modalUpdateReliefCenterId').value || null;
+
+    fetch(`http://localhost:3000/api/donations/${donationId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            Donor_Name: donorName,
+            Amount: amount,
+            Purpose: purpose,
+            Relief_Center_ID: reliefCenterId,
+        }),
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Donation updated successfully!');
+                fetchDonations();
+                fetchTotalDonationsByReliefCenter();
+                closeUpdateDonationModal();
+            } else {
+                alert('Failed to update donation.');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating donation:', error);
+            alert('Error updating donation.');
+        });
+}
+
+// Open the delete confirmation dialog
+function confirmDeleteDonation() {
+    const donationId = document.getElementById('donationId').value;
+    if (!donationId) {
+        alert('Please enter a Donation ID to delete.');
+        return;
+    }
+    document.getElementById('deleteDonationConfirmation').style.display = 'block';
+}
+
+// Close the delete confirmation dialog
+function closeDeleteDonationConfirmation() {
+    document.getElementById('deleteDonationConfirmation').style.display = 'none';
+}
+
+// Delete the donation
+function deleteDonation() {
+    const donationId = document.getElementById('donationId').value;
+
+    fetch(`http://localhost:3000/api/donations/${donationId}`, {
+        method: 'DELETE',
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Donation deleted successfully!');
+                fetchDonations();
+                fetchTotalDonationsByReliefCenter();
+                closeDeleteDonationConfirmation();
+            } else {
+                alert('Failed to delete donation.');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting donation:', error);
+            alert('Error deleting donation.');
+        });
+}
+
         document.addEventListener('DOMContentLoaded', () => {
             fetchDonations();
             fetchTotalDonationsByReliefCenter();
         });
     </script>
 </body>
+
 </html>

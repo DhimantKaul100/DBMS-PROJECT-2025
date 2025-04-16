@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Government Agencies</title>
     <link rel="stylesheet" href="assets/styles/styles.css">
 </head>
+
 <body>
     <!-- Header -->
     <header>
@@ -28,7 +30,8 @@
     <section class="hero">
         <div class="hero-content">
             <h2>Government Agencies</h2>
-            <p>Explore the key agencies involved in disaster management and their critical roles in ensuring public safety and disaster preparedness.</p>
+            <p>Explore the key agencies involved in disaster management and their critical roles in ensuring public
+                safety and disaster preparedness.</p>
         </div>
     </section>
 
@@ -39,6 +42,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Agency ID</th>
                         <th>Agency Name</th>
                         <th>Contact Number</th>
                         <th>Responsibilities</th>
@@ -50,21 +54,86 @@
             </table>
         </section>
 
+        <!-- Section: Add Government Agency -->
+        <section id="add-agency">
+            <h2>Add a New Government Agency</h2>
+            <form id="agencyForm" onsubmit="addAgency(event)">
+                <input type="text" id="agency_name" placeholder="Agency Name" required>
+                <input type="text" id="contact_number" placeholder="Contact Number" required>
+                <textarea id="responsibilities" placeholder="Responsibilities" required></textarea>
+                <button type="submit" class="site-button">Add Agency</button>
+            </form>
+        </section>
+
+        <!-- Section: Update or Delete Agency -->
+<section id="update-delete-agency">
+    <h2>Update or Delete Agency</h2>
+    <form id="updateDeleteAgencyForm">
+        <div class="form-group">
+            <label for="agencyId">Agency Name:</label>
+            <input type="text" id="agencyId" placeholder="Enter Agency Name" required>
+        </div>
+        <div class="button-group">
+            <button type="button" class="site-button" onclick="confirmDeleteAgency()">Delete</button>
+            <button type="button" class="site-button" onclick="openUpdateAgencyModal()">Update</button>
+        </div>
+    </form>
+</section>
+
+<!-- Modal for Update Agency -->
+<div id="updateAgencyModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeUpdateAgencyModal()">&times;</span>
+        <h2>Update Agency</h2>
+        <form id="updateAgencyForm">
+            <div class="form-group">
+                <input type="text" id="modalUpdateAgencyName" placeholder="Agency Name">
+            </div>
+            <div class="form-group">
+                <input type="text" id="modalUpdateContactNumber" placeholder="Contact Number">
+            </div>
+            <div class="form-group">
+                <textarea id="modalUpdateResponsibilities" placeholder="Responsibilities"></textarea>
+            </div>
+            <div class="button-group">
+                <button type="button" class="site-button" onclick="submitUpdateAgency()">Yes</button>
+                <button type="button" class="site-button" onclick="closeUpdateAgencyModal()">No</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Confirmation Dialog for Delete -->
+<div id="deleteAgencyConfirmation" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeDeleteAgencyConfirmation()">&times;</span>
+        <h2>Are you sure you want to delete this agency?</h2>
+        <div class="button-group">
+            <button type="button" class="site-button" onclick="deleteAgency()">Yes</button>
+            <button type="button" class="site-button" onclick="closeDeleteAgencyConfirmation()">No</button>
+        </div>
+    </div>
+</div>
+
         <!-- Section: Featured Agencies -->
         <section id="featuredAgencies">
             <h2>Featured Agencies</h2>
             <div class="featured-container">
                 <article>
                     <h3>National Disaster Management Authority</h3>
-                    <p>The NDMA is the leading agency responsible for disaster preparedness, mitigation, and response. It works closely with local governments and international organizations to ensure effective disaster management.</p>
+                    <p>The NDMA is the leading agency responsible for disaster preparedness, mitigation, and response.
+                        It works closely with local governments and international organizations to ensure effective
+                        disaster management.</p>
                 </article>
                 <article>
                     <h3>Environmental Protection Agency</h3>
-                    <p>The EPA focuses on protecting the environment and reducing the impact of natural disasters caused by environmental degradation. It also provides guidelines for sustainable development.</p>
+                    <p>The EPA focuses on protecting the environment and reducing the impact of natural disasters caused
+                        by environmental degradation. It also provides guidelines for sustainable development.</p>
                 </article>
                 <article>
                     <h3>Health and Human Services</h3>
-                    <p>HHS provides medical aid, public health services, and resources to disaster-affected communities, ensuring their safety and well-being.</p>
+                    <p>HHS provides medical aid, public health services, and resources to disaster-affected communities,
+                        ensuring their safety and well-being.</p>
                 </article>
             </div>
         </section>
@@ -75,7 +144,8 @@
             <div class="news-container">
                 <article class="news-item">
                     <h4>New Disaster Preparedness Guidelines Released</h4>
-                    <p>The NDMA has released updated guidelines to improve disaster preparedness and response strategies.</p>
+                    <p>The NDMA has released updated guidelines to improve disaster preparedness and response
+                        strategies.</p>
                     <a href="#">Read More</a>
                 </article>
                 <article class="news-item">
@@ -85,7 +155,8 @@
                 </article>
                 <article class="news-item">
                     <h4>Volunteer Training Program Announced</h4>
-                    <p>A new training program for disaster relief volunteers has been launched to enhance their skills.</p>
+                    <p>A new training program for disaster relief volunteers has been launched to enhance their skills.
+                    </p>
                     <a href="#">Read More</a>
                 </article>
             </div>
@@ -96,15 +167,18 @@
             <h2>Frequently Asked Questions</h2>
             <div class="faq-item">
                 <h3>What is the role of government agencies in disaster management?</h3>
-                <p>Government agencies play a crucial role in disaster management by coordinating relief efforts, providing resources, and ensuring public safety during emergencies.</p>
+                <p>Government agencies play a crucial role in disaster management by coordinating relief efforts,
+                    providing resources, and ensuring public safety during emergencies.</p>
             </div>
             <div class="faq-item">
                 <h3>How can I contact an agency for assistance?</h3>
-                <p>You can contact agencies through their official helpline numbers or visit their websites for more information.</p>
+                <p>You can contact agencies through their official helpline numbers or visit their websites for more
+                    information.</p>
             </div>
             <div class="faq-item">
                 <h3>Can I volunteer to work with these agencies?</h3>
-                <p>Yes, many agencies welcome volunteers to assist in disaster relief efforts. Check their websites or contact them directly for opportunities.</p>
+                <p>Yes, many agencies welcome volunteers to assist in disaster relief efforts. Check their websites or
+                    contact them directly for opportunities.</p>
             </div>
         </section>
     </main>
@@ -113,13 +187,10 @@
     <footer>
         <div class="footer-content">
             <p>&copy; 2025 Disaster Management System. All rights reserved.</p>
-            <p>Follow us on: 
-                <a href="https://facebook.com" target="_blank">Facebook</a> | 
-                <a href="https://twitter.com" target="_blank">Twitter</a> | 
-                <a href="https://instagram.com" target="_blank">Instagram</a>
-            </p>
         </div>
     </footer>
+
+    <script src="js/app.js"></script>
 
     <script>
         function fetchAgencies() {
@@ -131,6 +202,7 @@
                     data.forEach(agency => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
+                            <td>${agency.agency_id}</td>
                             <td>${agency.agency_name}</td>
                             <td>${agency.contact_number}</td>
                             <td>${agency.responsibilities}</td>
@@ -145,9 +217,143 @@
                 });
         }
 
+        function addAgency(event) {
+            event.preventDefault();
+
+            const agencyName = document.getElementById('agency_name').value;
+            const contactNumber = document.getElementById('contact_number').value;
+            const responsibilities = document.getElementById('responsibilities').value;
+
+            fetch('http://localhost:3000/api/agencies', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    Agency_Name: agencyName,
+                    Contact_Number: contactNumber,
+                    Responsibilities: responsibilities,
+                }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Agency added successfully!');
+                        document.getElementById('agencyForm').reset();
+                        fetchAgencies(); // Refresh the agencies list
+                    } else {
+                        alert('Failed to add agency.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error adding agency:', error);
+                    alert('Error adding agency.');
+                });
+        }
+        // Open the update modal and populate fields
+function openUpdateAgencyModal() {
+    const agencyName = document.getElementById('agencyId').value;
+    if (!agencyName) {
+        alert('Please enter an Agency Name to update.');
+        return;
+    }
+
+    fetch(`http://localhost:3000/api/agencies/${agencyName}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Agency not found');
+            }
+            return response.json();
+        })
+        .then(agency => {
+            document.getElementById('modalUpdateAgencyName').value = agency.agency_name;
+            document.getElementById('modalUpdateContactNumber').value = agency.contact_number;
+            document.getElementById('modalUpdateResponsibilities').value = agency.responsibilities;
+
+            document.getElementById('updateAgencyModal').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error fetching agency:', error);
+            alert('Agency not found.');
+        });
+}
+
+// Close the update modal
+function closeUpdateAgencyModal() {
+    document.getElementById('updateAgencyModal').style.display = 'none';
+}
+
+// Submit the update
+function submitUpdateAgency() {
+    const agencyName = document.getElementById('modalUpdateAgencyName').value;
+    const contactNumber = document.getElementById('modalUpdateContactNumber').value;
+    const responsibilities = document.getElementById('modalUpdateResponsibilities').value;
+
+    fetch(`http://localhost:3000/api/agencies/${agencyName}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            Contact_Number: contactNumber,
+            Responsibilities: responsibilities,
+        }),
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Agency updated successfully!');
+                fetchAgencies();
+                closeUpdateAgencyModal();
+            } else {
+                alert('Failed to update agency.');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating agency:', error);
+            alert('Error updating agency.');
+        });
+}
+
+// Open the delete confirmation dialog
+function confirmDeleteAgency() {
+    const agencyName = document.getElementById('agencyId').value;
+    if (!agencyName) {
+        alert('Please enter an Agency Name to delete.');
+        return;
+    }
+    document.getElementById('deleteAgencyConfirmation').style.display = 'block';
+}
+
+// Close the delete confirmation dialog
+function closeDeleteAgencyConfirmation() {
+    document.getElementById('deleteAgencyConfirmation').style.display = 'none';
+}
+
+// Delete the agency
+function deleteAgency() {
+    const agencyName = document.getElementById('agencyId').value;
+
+    fetch(`http://localhost:3000/api/agencies/${agencyName}`, {
+        method: 'DELETE',
+    })
+        .then(response => {
+            if (response.ok) {
+                alert('Agency deleted successfully!');
+                fetchAgencies();
+                closeDeleteAgencyConfirmation();
+            } else {
+                alert('Failed to delete agency.');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting agency:', error);
+            alert('Error deleting agency.');
+        });
+}
+
         document.addEventListener('DOMContentLoaded', () => {
             fetchAgencies();
         });
     </script>
 </body>
+
 </html>
